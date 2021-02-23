@@ -1,1 +1,15 @@
 @import 'layout';
+#__next{
+    background: #F4F4F7;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 0.875rem;
+    font-family: "Open Sans",sans-serif;
+    font-weight: 500;
+    line-height: 1.43;
+}
+.avatar.jsx-35822646 { // user > icon
+    width: 48px !important;
+    height: 48px !important;
+} 
+    
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap')
