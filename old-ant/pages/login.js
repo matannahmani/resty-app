@@ -29,9 +29,11 @@ const Login = () => {
       if (response.status.code === 200)
       {
        setUser({...user,...response.data,login: true})
+       localStorage.setItem('logged', true);
         message.success('Logged in successfully');
         router.push('/')
       }else{
+        localStorage.setItem('logged', false);
         message.error('Username or Password are incorrect');
       }
       setLoad(false);
