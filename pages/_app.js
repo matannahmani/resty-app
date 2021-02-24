@@ -24,9 +24,6 @@ function MyApp({ Component, pageProps }) {
   NProgress.configure({ showSpinner: true });
   const [user,setUser] = useState({logged: false,location: '',info: {email: null,adminlevel: null,photo: null,shopname: null,name: null,shopid: null,subbed: true}})
   const [shop,setShop] = useState({id: null,open: null,delivery: null,takeaway: null,loading: false,url: null})
-  const resetUser = () =>{
-    setUser({logged: false,location: '',info: {email: null,adminlevel: null,photo: null,shopname: null,name: null,shopid: null,subbed: true}});
-  }
   const checkUser = async () => {
     if (localStorage.getItem('logged') === "true" && user.logged === false || localStorage.getItem('logged') === null){
       const response = await isLogged();
@@ -67,7 +64,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <GeistProvider>
     <CssBaseline />
-    <UserContext.Provider value={[user,setUser,resetUser]}>
+    <UserContext.Provider value={[user,setUser]}>
     <ShopContext.Provider value={[shop,setShop]}>
     {loading && <Loading/>}
     <Layout>

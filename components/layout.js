@@ -12,7 +12,7 @@ import {switchshop,switchdelivery,switchtakeaway} from '../lib/shopapicontroller
 const Layout = (props) => {
   const [mobile,setMobile] = useState(false)
   const [menu, setMenu] = useState(true)
-  const [user, resetUser] = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
   const ref = React.useRef()
   const [shop,setShop] = React.useContext(ShopContext);
   const router = useRouter();
@@ -52,7 +52,7 @@ const Layout = (props) => {
   const userlogout = async () => {
     await logout();
     localStorage.setItem('logged', false);
-    location.reload();
+    setUser({logged: false,location: '',info: {email: null,adminlevel: null,photo: null,shopname: null,name: null,shopid: null,subbed: true}})
   }
   
   useClickAway(ref, (e) => {
@@ -86,7 +86,7 @@ const Layout = (props) => {
       <DelayedRender time={400}>
       <div ref={ref} className="sidebar-content">
       <Grid className="sidebar-head">
-      <User src={ user.info.photo !== null ? "https://unix.bio/assets/avatar.png" : ''} name={user.info.name !== null ? user.info.name : "Please login"}>
+      <User src={user.info.photo !== null ? "https://unix.bio/assets/avatar.png" : ''} name={user.info.name !== null ? user.info.name : "Please login"}>
         {user.info.shopname !== null ? user.info.shopname : "Please login"}
       </User>
       </Grid>
