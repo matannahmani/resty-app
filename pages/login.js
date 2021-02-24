@@ -3,6 +3,7 @@ import React,{useState,useEffect,useContext} from 'react';
 import { useRouter } from 'next/router';
 import {login} from '../lib/userapicontroller';
 import { UserContext } from '../lib/contextapi';
+import { shopstatus } from '../lib/shopapicontroller';
 
 const AdminLogin = () => {
     const username = React.createRef();
@@ -18,6 +19,9 @@ const AdminLogin = () => {
                 const result = await login({email: username.current.value,password: password.current.value});
                 if (result.status !== 401 && result.status.code === 200){
                     setUser({...user,logged: true,info: result.data});
+                    const myshop = await shopstatus(response.data.data.shop_id);
+                    if (myshop.status === 200)
+                      setShop(myshop.data)
                     localStorage.setItem('logged', true)
                     setToast({type: "success",text: "Logged in successfully"});
                     router.push('/')        
