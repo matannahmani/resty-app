@@ -7,6 +7,7 @@ import React from 'react';
 import {apigetOrder,apipatchOrder} from '../lib/orderapicontroller';
 import { ShopContext } from '../lib/contextapi';
 import Router from 'next/router';
+import { isLogged } from '../lib/userapicontroller';
 
   const Order = () => {
     const operation = (actions, rowData) => {
@@ -61,8 +62,16 @@ import Router from 'next/router';
     }
     useEffect(async () =>{
         setShop({...shop,loading: true})
-        const data = await apigetOrder(shop.id);
-        console.log(data);
+        let data;
+        if (shop.id === null || shop.id === undefined){
+            const shopid = await isLogged();
+            if (shopid.data.status.code === 200)
+                data = await apigetOrder(shopid.data.data.shop_id);
+            else
+                resucemsg();
+        }else{
+            data = await apigetOrder(shop.id);
+        }
         if (data.status === 200 && data.data !== null){
         let datalist = []
         data.data.forEach (item => {
@@ -119,8 +128,8 @@ import Router from 'next/router';
       return (
           <>
         <Grid.Container alignItems={"center"} justify={"center"}>
-        <Grid style={{overflow: 'auto'}} alignItems={"center"} justify={"center"}>
-        <Card type="violet" shadow>
+        <Grid xs alignItems={"center"} justify={"center"}>
+        <Card style={{overflow: 'auto'}}type="violet" shadow>
             <Text h1 size="24px" className="align-center">Order Control Panel</Text>
         <Table hover={false} className="table-white" data={pcount === 1 ? data.slice(0,5) : data.slice((pcount-1) *5,pcount * 5)}>
           <Table.Column prop="date" label="date" />

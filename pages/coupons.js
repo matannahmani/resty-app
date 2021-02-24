@@ -131,8 +131,8 @@ import Router from 'next/router';
       return (
           <>
         <Grid.Container alignItems={"center"} justify={"center"}>
-        <Grid style={{overflow: 'auto'}} xs alignItems={"center"} justify={"center"}>
-        <Card type="violet" shadow>
+        <Grid xs alignItems={"center"} justify={"center"}>
+        <Card style={{overflow: 'auto'}}type="violet" shadow>
             <Text h1 size="24px" className="align-center">Coupon Control Panel</Text>
         <Table hover={false} className="table-white" data={pcount === 1 ? data.slice(0,5) : data.slice((pcount-1) *5,pcount * 5)}>
           <Table.Column prop="code" label="code" />
