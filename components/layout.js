@@ -51,6 +51,7 @@ const Layout = (props) => {
 
   const userlogout = async () => {
     await logout();
+    localStorage.setItem('logged', false);
     location.reload();
   }
   

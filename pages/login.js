@@ -2,7 +2,7 @@ import {Grid,Button,Card,Spacer,Input,Dot,useToasts} from '@geist-ui/react';
 import React,{useState,useEffect,useContext} from 'react';
 import { useRouter } from 'next/router';
 import {login} from '../lib/userapicontroller';
-import { UserContext } from '../lib/contextapi';
+import { ShopContext, UserContext } from '../lib/contextapi';
 import { shopstatus } from '../lib/shopapicontroller';
 
 const AdminLogin = () => {
@@ -11,6 +11,7 @@ const AdminLogin = () => {
     const [, setToast] = useToasts();
     const [loading,setLoading] = useState(false);
     const [user,setUser] = React.useContext(UserContext);
+    const [shop,setShop] = React.useContext(ShopContext);
     const router = useRouter();
     const loginHandler = async () =>{
         setLoading(true);
@@ -19,7 +20,7 @@ const AdminLogin = () => {
                 const result = await login({email: username.current.value,password: password.current.value});
                 if (result.status !== 401 && result.status.code === 200){
                     setUser({...user,logged: true,info: result.data});
-                    const myshop = await shopstatus(response.data.data.shop_id);
+                    const myshop = await shopstatus(result.data.shop_id);
                     if (myshop.status === 200)
                       setShop(myshop.data)
                     localStorage.setItem('logged', true)
