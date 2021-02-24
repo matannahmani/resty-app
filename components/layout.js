@@ -1,5 +1,5 @@
 import {Breadcrumbs,Grid,useToasts,useClickAway,User} from '@geist-ui/react'
-import { Menu, X, LogIn, LogOut, Home, Grid as GridIcon, Truck, ShoppingCart, Power, CreditCard, List, Package } from '@geist-ui/react-icons'
+import { Menu, X, LogIn, LogOut, Home, Grid as GridIcon, Truck, ShoppingCart, Power, CreditCard, List, Package, Monitor } from '@geist-ui/react-icons'
 import React,{ useContext, useEffect, useState } from 'react'
 import SidebarBTN from './sidebarbtn'
 import DelayedRender from './delayrender'
@@ -112,6 +112,9 @@ const Layout = (props) => {
         <SidebarBTN icon={<Truck/>} onClick={deliveryHandler} text={`${shop.delivery ? 'Close' : 'Open'} Delivery`}/>
         <SidebarBTN icon={<ShoppingCart/>} onClick={takeawayHandler} text={`${shop.takeaway ? 'Close' : 'Open'} Takeaway`}/>
         <SidebarBTN icon={<Power/>} onClick={shopHandler} text={`${shop.open ? 'Close' : 'Open'} Shop`}/>
+        {shop.url !== null &&
+        <SidebarBTN icon={<Monitor/>} onClick={ () => window.open(shop.url)} text="To Site"/>
+        }
       </>
         :
         <Link href="/login">

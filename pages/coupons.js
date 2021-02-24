@@ -51,10 +51,7 @@ import Router from 'next/router';
         if (data.status === 200 && data.data !== null){
         let datalist = []
         data.data.forEach (item => {
-            Array.from({ length: 6 }, (x, i) => {
-                // something();
-                datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
-            });
+            datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
         });
         setData(datalist);
         setShop({...shop,loading: false});

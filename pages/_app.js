@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter()
   NProgress.configure({ showSpinner: true });
   const [user,setUser] = useState({logged: false,location: '',info: {email: null,adminlevel: null,photo: null,shopname: null,name: null,shopid: null,subbed: true}})
-  const [shop,setShop] = useState({id: null,open: null,delivery: null,takeaway: null,loading: false})
+  const [shop,setShop] = useState({id: null,open: null,delivery: null,takeaway: null,loading: false,url: null})
   const resetUser = () =>{
     setUser({logged: false,location: '',info: {email: null,adminlevel: null,photo: null,shopname: null,name: null,shopid: null,subbed: true}});
   }
