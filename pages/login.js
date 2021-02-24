@@ -17,24 +17,24 @@ const AdminLogin = () => {
             if (username.current.value.length > 4 && password.current.value.length > 4){
                 const result = await login({email: username.current.value,password: password.current.value});
                 if (result.status !== 401 && result.status.code === 200){
-                    setUser({...user,...result.data});
-                    localStorage.setItem('user', JSON.stringify(result.data));
-                    setToast({type: "success",text: "התחברת בהצלחה עובר לפנאל ניהול..."});
-                    router.push('admin/dashboard')        
+                    setUser({...user,logged: true,info: result.data});
+                    localStorage.setItem('logged', true)
+                    setToast({type: "success",text: "Logged in successfully"});
+                    router.push('/')        
                 }
                 else{
-                    setToast({type: "warning",text: "איימל או סיסמא לא נכונים"});
+                    setToast({type: "warning",text: "Email or password are wrong"});
                 }
             }
             else{
-                setToast({type: "warning",text: "איימל או סיסמא קצרים מדי"});
+                setToast({type: "warning",text: "Email or password are too short"});
             }
         setLoading(false);
     }
     useEffect(() => {
-        if (user.adminlevel > 0){
-            router.push('/admin/dashboard');
-            setToast({type: "success",text: "התחברת בהצלחה עובר לפנאל ניהול..."});
+        if (localStorage.getItem('logged') === 'true'){
+            router.push('/');
+            setToast({type: "success",text: "Logged back succesfully"});
         }
     }, [])
     return (

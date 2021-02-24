@@ -10,6 +10,24 @@
 .avatar.jsx-35822646 { // user > icon
     width: 48px !important;
     height: 48px !important;
-} 
-    
+}
+.align-center{
+    text-align: center;
+    align-items: center;
+}
+
+.cell { // set color of cells to white
+    color: #fafafa;
+}
+// remove number input arrows
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap')

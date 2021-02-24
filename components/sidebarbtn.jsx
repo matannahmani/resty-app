@@ -1,6 +1,6 @@
 
 const SidebarBTN = (props) => (
-    <div className="sidebar-link">
+    <div className="sidebar-link" onClick={props.onClick}>
     {props.icon}
     <span>
     {props.text}
