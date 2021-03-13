@@ -1,5 +1,5 @@
 import {Breadcrumbs,Grid,useToasts,useClickAway,User} from '@geist-ui/react'
-import { Menu, X, LogIn, LogOut, Home, Grid as GridIcon, Truck, ShoppingCart, Power, CreditCard, List, Package, Monitor } from '@geist-ui/react-icons'
+import { Menu, X, LogIn, LogOut, Home, Grid as GridIcon, Truck, ShoppingCart, Power, CreditCard, List, Package, Monitor, Users, Server } from '@geist-ui/react-icons'
 import React,{ useContext, useEffect, useState } from 'react'
 import SidebarBTN from './sidebarbtn'
 import DelayedRender from './delayrender'
@@ -91,36 +91,52 @@ const Layout = (props) => {
       </User>
       </Grid>
       <Grid alignItems="flex-end" className="sidebar-links">
-      {user.logged ?
+      {user.logged && user.info.adminlevel < 2 &&
+        <>
+          <SidebarBTN onClick={userlogout} icon={<LogOut/>} text="Logout"/>
+          <Link href="/">
+          <SidebarBTN icon={<Home/>} text="Home"/>
+          </Link>
+          <Link href="/orders">
+          <SidebarBTN icon={<List/>} text="Orders"/>
+          </Link>
+          <Link href="/orderstoday">
+          <SidebarBTN icon={<Package/>} text="Today Orders"/>
+          </Link>
+          <Link href="/products">
+          <SidebarBTN icon={<GridIcon/>} text="Products"/>
+          </Link>
+          <Link href="/coupons">
+          <SidebarBTN icon={<CreditCard/>} text="Coupons"/>
+          </Link>
+          <SidebarBTN icon={<Truck/>} onClick={deliveryHandler} text={`${shop.delivery ? 'Close' : 'Open'} Delivery`}/>
+          <SidebarBTN icon={<ShoppingCart/>} onClick={takeawayHandler} text={`${shop.takeaway ? 'Close' : 'Open'} Takeaway`}/>
+          <SidebarBTN icon={<Power/>} onClick={shopHandler} text={`${shop.open ? 'Close' : 'Open'} Shop`}/>
+          {shop.url !== null &&
+          <SidebarBTN icon={<Monitor/>} onClick={ () => window.open(shop.url)} text="To Site"/>
+          }
+        </>
+      }
+      {user.logged && user.info.adminlevel > 1 &&
       <>
-        <SidebarBTN onClick={userlogout} icon={<LogOut/>} text="Logout"/>
-        <Link href="/">
-        <SidebarBTN icon={<Home/>} text="Home"/>
-        </Link>
-        <Link href="/orders">
-        <SidebarBTN icon={<List/>} text="Orders"/>
-        </Link>
-        <Link href="/orderstoday">
-        <SidebarBTN icon={<Package/>} text="Today Orders"/>
-        </Link>
-        <Link href="/products">
-        <SidebarBTN icon={<GridIcon/>} text="Products"/>
-        </Link>
-        <Link href="/coupons">
-        <SidebarBTN icon={<CreditCard/>} text="Coupons"/>
-        </Link>
-        <SidebarBTN icon={<Truck/>} onClick={deliveryHandler} text={`${shop.delivery ? 'Close' : 'Open'} Delivery`}/>
-        <SidebarBTN icon={<ShoppingCart/>} onClick={takeawayHandler} text={`${shop.takeaway ? 'Close' : 'Open'} Takeaway`}/>
-        <SidebarBTN icon={<Power/>} onClick={shopHandler} text={`${shop.open ? 'Close' : 'Open'} Shop`}/>
-        {shop.url !== null &&
-        <SidebarBTN icon={<Monitor/>} onClick={ () => window.open(shop.url)} text="To Site"/>
-        }
+          <Link href="/sites/new">
+          <SidebarBTN icon={<Server/>} text="New Site"/>
+          </Link>
+          <Link href="/sites/all">
+          <SidebarBTN icon={<GridIcon/>} text="Show Site"/>
+          </Link>
+          <Link href="/sites/users">
+          <SidebarBTN icon={<Users/>} text="Show Users"/>
+          </Link>
+          <SidebarBTN onClick={userlogout} icon={<LogOut/>} text="Logout"/>
+
       </>
-        :
+      }
+      {!user.logged &&
         <Link href="/login">
         <SidebarBTN icon={<LogIn/>} text="Login"/>
         </Link>
-      }
+        }
 
       </Grid>
       {/* mobile sidebar close menu btn */}

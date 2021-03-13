@@ -19,6 +19,10 @@
 .cell { // set color of cells to white
     color: #fafafa;
 }
+.dot.disabled{
+  color: #F4F4F7 !important;
+  background-color: #0070f3 !important;
+}
 // remove number input arrows
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
