@@ -86,8 +86,8 @@ const Layout = (props) => {
       <DelayedRender time={400}>
       <div ref={ref} className="sidebar-content">
       <Grid className="sidebar-head">
-      <User src={user.info.photo !== null ? "https://unix.bio/assets/avatar.png" : ''} name={user.info.name !== null ? user.info.name : "Please login"}>
-        {user.info.shopname !== null ? user.info.shopname : "Please login"}
+      <User src={user.info.photo !== null ? "https://unix.bio/assets/avatar.png" : ''} name={user.info.name !== null ? user.info.name : ""}>
+        {user.info.shopname !== null ? user.info.shopname : ""}
       </User>
       </Grid>
       <Grid alignItems="flex-end" className="sidebar-links">
