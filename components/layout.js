@@ -53,6 +53,7 @@ const Layout = (props) => {
     await logout();
     localStorage.setItem('logged', false);
     setUser({logged: false,location: '',info: {email: null,adminlevel: null,photo: null,shopname: null,name: null,shopid: null,subbed: true}})
+    router.push('/');
   }
   
   useClickAway(ref, (e) => {
@@ -86,9 +87,13 @@ const Layout = (props) => {
       <DelayedRender time={400}>
       <div ref={ref} className="sidebar-content">
       <Grid className="sidebar-head">
+      {user.logged ?
       <User src={user.info.photo !== null ? "https://unix.bio/assets/avatar.png" : ''} name={user.info.name !== null ? user.info.name : ""}>
         {user.info.shopname !== null ? user.info.shopname : ""}
       </User>
+      : 
+      null
+      }
       </Grid>
       <Grid alignItems="flex-end" className="sidebar-links">
       {user.logged && user.info.adminlevel < 2 &&

@@ -1,13 +1,11 @@
-import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input,Pagination} from '@geist-ui/react';
+import {Table,Text,Button,Grid,Card,useToasts,Modal,Spacer,Input,Pagination} from '@geist-ui/react';
 import {useEffect, useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {ChevronLeft,ChevronRight} from '@geist-ui/react-icons'
-import {RiCoupon2Fill} from 'react-icons/ri';
 import React from 'react';
 import {apigetShops,apideleteShop, apipatchShop} from '../../lib/shopapicontroller';
 import { ShopContext } from '../../lib/contextapi';
 import Router from 'next/router';
-import { set } from 'nprogress';
 
   const allSites = () => {
     const operation = (actions, rowData) => {
@@ -124,7 +122,7 @@ import { set } from 'nprogress';
         <Grid.Container alignItems={"center"} justify={"center"}>
         <Grid xs alignItems={"center"} justify={"center"}>
         <Card style={{overflow: 'auto'}}type="violet" shadow>
-            <Text h1 size="24px" className="align-center">Coupon Control Panel</Text>
+            <Text h1 size="24px" className="align-center">Sites Control Panel</Text>
         <Table hover={false} className="table-white" data={pcount === 1 ? data.slice(0,5) : data.slice((pcount-1) *5,pcount * 5)}>
           <Table.Column prop="name" label="Resturant Name" />
           <Table.Column prop="link" label="Resturant Link" />
