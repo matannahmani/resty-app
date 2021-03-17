@@ -6,7 +6,7 @@ import React from 'react';
 import {apigetShops,apideleteShop, apipatchShop} from '../../lib/shopapicontroller';
 import { ShopContext } from '../../lib/contextapi';
 import Router from 'next/router';
-
+import ResturantCatgeory from '../../components/resCategory';
   const allSites = () => {
     const operation = (actions, rowData) => {
         return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Resturant</Button>
@@ -90,7 +90,7 @@ import Router from 'next/router';
     }
 
     const saveHandler = async () =>{
-        const index = data.findIndex(e => e.name === site.name)
+        const index = data.findIndex(e => e.id === site.id)
         if (site.edit)
         {
             if (site.name.length > 5 && validateEmail(site.users[0].email) && site.users[0].phone.length > 5 && site.users[0].name.length > 2)
@@ -99,7 +99,7 @@ import Router from 'next/router';
                 if (result.data.status === 200){
                     setToast({type: 'success',text: `${site.name} was updated`})
                     const updatedata = [...data]
-                    updatedata[index] = {...site}
+                    updatedata[index] = {...site,url: result.data.data.data.attributes.url}
                     setData([...updatedata]);
                     setSite({...site,edit: false})
                 }
@@ -147,6 +147,7 @@ import Router from 'next/router';
         <div className="align-center">
             <Input onChange={(e) => setSite({...site,name: e.target.value})} label="name" disabled={!site.edit} initialValue={site.name !== '' ? site.name : ''} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="Resturant Name"/>
             <Spacer/>
+            <ResturantCatgeory disabled={!site.edit} value={site.category} onChange={(e) => setSite({...site,data:{...site.data,category: e}})} placeholder="Burger" />
             <Text>User Info</Text>
             <Input onChange={(e) => setSite({...site,users: [{...site.users[0],email: e.target.value}]})} label="email" disabled={!site.edit} initialValue={site.users !== undefined ? site.users[0].email : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="Resturant Name"/>
             <Spacer/>

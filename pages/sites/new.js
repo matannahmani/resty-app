@@ -3,6 +3,7 @@ import {useState, useEffect } from 'react';
 import { isLogged } from '../../lib/userapicontroller';
 import { useRouter } from 'next/router'
 import { newshop } from '../../lib/shopapicontroller';
+import ResturantCatgeory from '../../components/resCategory';
 const NewSite = () => {
 
     const [page,setPage] = useState({loading: true,allowed: false})
@@ -84,17 +85,7 @@ const NewSite = () => {
             </Input>
             <Spacer />
             <Text h3>Resturant Category</Text>
-            <Select value={resturant.data.category} onChange={(e) => setResturant({...resturant,data:{...resturant.data,category: e}})} placeholder="Burger" width="200px">
-            <Select.Option label>Asian</Select.Option>
-            <Select.Option value="ramen">Ramen</Select.Option>
-            <Select.Option value="sushi">Sushi</Select.Option>
-            <Select.Option label>American & Gril</Select.Option>
-            <Select.Option value="burger">Burger</Select.Option>
-            <Select.Option value="kebab">Kebab</Select.Option>
-            <Select.Option label>Italian</Select.Option>
-            <Select.Option value="pizza">Pizza</Select.Option>
-            <Select.Option value="pasta">Pasta</Select.Option>
-            </Select>
+            <ResturantCatgeory value={resturant.data.category} onChange={(e) => setResturant({...resturant,data:{...resturant.data,category: e}})} placeholder="Burger" />
             </>
             }
             {resturant.stage === 2 &&
