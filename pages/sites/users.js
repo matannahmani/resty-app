@@ -1,18 +1,17 @@
-import {Table,Text,Button,Grid,Card,useToasts,Modal,Spacer,Input,Pagination} from '@geist-ui/react';
+import {Table,Text,Button,Grid,Card,useToasts,Modal,Spacer,Input,Pagination, Select} from '@geist-ui/react';
 import {useEffect, useState} from 'react';
-import {TiTick,TiCancel} from 'react-icons/ti';
-import {ChevronLeft,ChevronRight} from '@geist-ui/react-icons'
+import {ChevronLeft,ChevronRight, Users} from '@geist-ui/react-icons'
 import React from 'react';
-import {apigetShops,apideleteShop, apipatchShop} from '../../lib/shopapicontroller';
 import { ShopContext } from '../../lib/contextapi';
 import Router from 'next/router';
-import ResturantCatgeory from '../../components/resCategory';
+import { apideleteUser, apigetUsers, apipatchUser, apipostUser } from '../../lib/userapicontroller';
+import { getAllShops } from '../../lib/shopapicontroller';
   const allUsers = () => {
     const operation = (actions, rowData) => {
         return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show User</Button>
     }
-    const enabled = (actions, rowData) => {
-        switch (rowData.rowValue.users[0].adminlevel) {
+    const userlevel = (actions, rowData) => {
+        switch (rowData.rowValue.adminlevel) {
             case 1:
                 return <Text>Admin</Text>
             case 0:
@@ -21,15 +20,14 @@ import ResturantCatgeory from '../../components/resCategory';
                 return <Text>Resty Admin</Text>
         }
     }
-    const email = (actions, rowData) => {
-        return <Text>{rowData.rowValue.users[0].email}</Text>
-    }
+
     const [shop,setShop] = React.useContext(ShopContext);
     const [state, setState] = useState(false)
     const [pcount, setpcount] = useState(1);
     const [, setToast] = useToasts();
     const [site, setSite] = useState({edit: false});
     const [data,setData] = useState([]);
+    const [allshops,setAll] = useState([]);
     const resucemsg = () => {
         setShop({...shop,loading: true})
         setToast({type: 'error',text: `something went wrong!`})
@@ -54,22 +52,24 @@ import ResturantCatgeory from '../../components/resCategory';
  
     useEffect(async () =>{
         setShop({...shop,loading: true})
-        const data = await apigetShops();
+        const data = await apigetUsers();
         if (data.status === 200 && data.data !== null){
+        const allshops = await getAllShops();
+        setAll(allshops.data.data)
         let datalist = []
         data.data.forEach (item => {
-            datalist.push({...item, operation,enabled, email})
+            datalist.push({...item, operation,userlevel})
         });
         setData(datalist);
         setShop({...shop,loading: false});
-    }
-    else if (data.code === 500){
-        resucemsg();
-    }
+        }
+        else if (data.code === 500){
+            resucemsg();
+        }        
         setShop({...shop,loading: false})
     },[]);
     const handler = (e,actions) => {
-        setSite({...e.rowValue,edit: false,remove: actions.remove,update: actions.update});
+        setSite({...e.rowValue,newuser: false,edit: false,remove: actions.remove,update: actions.update});
         setState(true);
     }
     const closeHandler = (event) => {
@@ -78,7 +78,7 @@ import ResturantCatgeory from '../../components/resCategory';
 
     const removeHandler = async () => {
         const index = data.findIndex(e => e.name === site.name)
-        const result = await apideleteUser(site.users[0]);
+        const result = await apideleteUser(site.id);
         if (result.status === 200){
             setToast({type: 'warning',text: `${site.name} was removed`})
             const updatedata = [...data];
@@ -101,26 +101,42 @@ import ResturantCatgeory from '../../components/resCategory';
         return re.test(str);
     }
     const saveHandler = async () =>{
-        const index = data.findIndex(e => e.id === site.id)
         if (site.edit)
         {
-            if (site.name.length > 5 && validateEmail(site.users[0].email) && site.users[0].phone.length > 5 && site.users[0].name.length > 2
-            && (site.users[0].password === undefined || checkPassword(site.users[0].password)))
+            if (site.name.length > 2 && validateEmail(site.email) && site.phone.length > 5
+            && (site.password === undefined || checkPassword(site.password)) && site.shop_id !== undefined && site.shop_id !== null)
             {
-                const result = await apipatchShop(site,site.id);
+                let result;
+                if (site.edit && !site.newuser)
+                {
+                    const userdata = {user: {name: site.name}}
+                    result = await apipatchUser(userdata,site.id);
+                }
+                else{
+                    const userdata = {user: {name: site.name,email: site.email, adminlevel: site.adminlevel, phone: site.phone, password: site.password,shop_id: site.shop_id}}
+                    result = await apipostUser(userdata);
+                }
                 if (result.data.status === 200){
-                    setToast({type: 'success',text: `${site.name} was updated`})
+                    setToast({type: 'success',text: `${site.name} was ${site.newuser ? 'Created' : 'updated'}`})
                     const updatedata = [...data]
-                    updatedata[index] = {...site,url: result.data.data.data.attributes.url}
+                    if (!site.newuser)
+                        {
+                            const index = data.findIndex(e => e.id === site.id)
+                            updatedata[index] = {...site,url: result.data.data.data.attributes.url}
+                        }
+                        else
+                        {
+                            updatedata.push(site);
+                        }
                     setData([...updatedata]);
-                    setSite({...site,edit: false})
+                    setSite({...site,edit: false,newuser: false})
                 }
                 else {
                     setToast({type: 'error',text: `ERROR`})
                 }
             }
             else{
-                setToast({type: 'warning', text: "Site info invaild"})
+                setToast({type: 'warning', text: "User info invaild"})
             }
                 
         }
@@ -128,7 +144,13 @@ import ResturantCatgeory from '../../components/resCategory';
             setState(false);
         }
     }
-
+    const newUser = () => {
+        setSite({name: '', phone: '', password: '', email: '', shopname: '', edit: true,newuser: true, operation,userlevel})
+        setState(true);
+    }
+    const findShopName = (id) => {
+        return allshops.find(e => e.id === id).name
+    }
       return (
           <>
         <Grid.Container alignItems={"center"} justify={"center"}>
@@ -136,9 +158,9 @@ import ResturantCatgeory from '../../components/resCategory';
         <Card style={{overflow: 'auto'}}type="violet" shadow>
             <Text h1 size="24px" className="align-center">Users Control Panel</Text>
         <Table hover={false} className="table-white" data={pcount === 1 ? data.slice(0,5) : data.slice((pcount-1) *5,pcount * 5)}>
-          <Table.Column prop="name" label="Resturant Name" />
+          <Table.Column prop="shopname" label="Resturant Name" />
           <Table.Column prop="email" label="User Email" />
-          <Table.Column prop="enabled" label="Resturant Open" />
+          <Table.Column prop="userlevel" label="User Level" />
           <Table.Column prop="operation" label="operation" />
         </Table>
         <Spacer/>
@@ -149,6 +171,9 @@ import ResturantCatgeory from '../../components/resCategory';
             <Pagination.Previous onClick={(e) => handlePage('-')}><ChevronLeft /></Pagination.Previous>
             </Pagination>
             </Grid>
+            <Grid>
+                <Button size="mini" shadow auto icon={<Users/>} onClick={newUser}>new User</Button>
+            </Grid>
         </Grid.Container>
         </Card>
         </Grid>
@@ -158,21 +183,36 @@ import ResturantCatgeory from '../../components/resCategory';
         <Modal.Content>
         <div className="align-center">
             <Text>User Info</Text>
-            <Input onChange={(e) => setSite({...site,users: [{...site.users[0],email: e.target.value}]})} label="email" disabled={!site.edit} initialValue={site.users !== undefined ? site.users[0].email : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="Name"/>
+            <Input onChange={(e) => setSite({...site,email: e.target.value})} label="email" disabled={!site.edit} initialValue={site.email !== undefined ? site.email : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="Email"/>
             <Spacer/>
-            <Input onChange={(e) => setSite({...site,users: [{...site.users[0],phone: e.target.value}]})} label="phone" disabled={!site.edit} initialValue={site.users !== undefined ? site.users[0].phone : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="Phone"/>
+            <Input onChange={(e) => setSite({...site,phone: e.target.value})} label="phone" disabled={!site.edit} initialValue={site.phone !== undefined ? site.phone : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="Phone"/>
             <Spacer/>
-            <Input onChange={(e) => setSite({...site,users: [{...site.users[0],name: e.target.value}]})} label="name" disabled={!site.edit} initialValue={site.users !== undefined ? site.users[0].name : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="User Name"/>
+            <Input onChange={(e) => setSite({...site,name: e.target.value})} label="name" disabled={!site.edit} initialValue={site.name !== undefined ? site.name : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="User Name"/>
             <Spacer/>
-            <Input.Password onChange={(e) => setSite({...site,users: [{...site.users[0],password: e.target.value}]})} label="password" disabled={!site.edit} initialValue={site.users !== undefined ? site.users[0].password : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="User Password"/>
+            <Input.Password onChange={(e) => setSite({...site,password: e.target.value})} label="password" disabled={!site.edit} initialValue={site.password !== undefined ? site.password : undefined} className="no-hover" clearable width="80%" style={{textAlign: "center"}} placeholder="User Password"/>
             <Spacer/>
+            <Select placeholder="Account level" onChange={(e) => setSite({...site,adminlevel: parseInt(e)})} disabled={!site.edit} value={site.adminlevel !== undefined ? site.adminlevel.toString() : null}>
+                <Select.Option value="0">Casher</Select.Option>
+                <Select.Option value="1">Resturant Owner</Select.Option>
+                <Select.Option value="2">Resty Admin</Select.Option>
+            </Select>
+            {site.newuser &&
+            <div>
+            <Spacer/>
+            <Select onChange={(e) => setSite({...site,shop_id: parseInt(e),shopname: findShopName(parseInt(e))})} placeholder="Resturant Name" disabled={!site.edit} value={site.shop_id !== undefined ? site.shop_id.toString() : null}>
+                {allshops.map(e => {
+                    return (
+                        <Select.Option key={e.id} value={e.id.toString()}>{e.name}</Select.Option>
+                    )
+                })}
+            </Select>
+            </div>
+            }
         </div>
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(() => setSite({...site,edit: !site.edit}))}>{!site.edit ? 'Edit' : 'Cancel'}</Modal.Action>
         <Modal.Action passive onClick={saveHandler}>{!site.edit ? 'Close' : 'Save'}</Modal.Action>
-        {site.code === '' ? 
-        <Modal.Action passive onClick={() => ''}>Submit</Modal.Action>
-        :
+        {!site.edit &&
         <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
         }
         </Modal>
