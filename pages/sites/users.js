@@ -212,7 +212,7 @@ import { getAllShops } from '../../lib/shopapicontroller';
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(() => setSite({...site,edit: !site.edit}))}>{!site.edit ? 'Edit' : 'Cancel'}</Modal.Action>
         <Modal.Action passive onClick={saveHandler}>{!site.edit ? 'Close' : 'Save'}</Modal.Action>
-        {!site.edit &&
+        {!site.edit && !site.newuser &&
         <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
         }
         </Modal>
